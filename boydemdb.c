@@ -215,6 +215,9 @@ boydemdb boydemdb_open(const char *path)
 
 void boydemdb_close(boydemdb db)
 {
+	if (!db)
+		return;
+
 	sqlite3_finalize(db->delete);
 	sqlite3_finalize(db->one);
 	sqlite3_finalize(db->select);

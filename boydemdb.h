@@ -25,7 +25,10 @@
 #ifndef _BOYDEMDB_H_INCLDED
 #	define _BOYDEMDB_H_INCLDED
 
+#	include <stddef.h>
 #	include <sys/types.h>
+
+#	define BOYDEMDB_INIT NULL
 
 #	ifdef BOYDEMDB_INTERNAL
 #		include <sqlite3.h>
