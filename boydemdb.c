@@ -62,6 +62,7 @@ boydemdb_id boydemdb_set(boydemdb db,
 	id = sqlite3_last_insert_rowid(db->db);
 
 reset:
+	sqlite3_clear_bindings(db->insert);
 	sqlite3_reset(db->insert);
 
 out:
@@ -93,6 +94,7 @@ void *boydemdb_get(boydemdb db, boydemdb_id id, size_t *size)
 	copy[*size] = '\0';
 
 reset:
+	sqlite3_clear_bindings(db->select);
 	sqlite3_reset(db->select);
 
 out:
@@ -129,7 +131,8 @@ void *boydemdb_one(boydemdb db,
 	copy[*size] = '\0';
 
 reset:
-	sqlite3_reset(db->select);
+	sqlite3_clear_bindings(db->one);
+	sqlite3_reset(db->one);
 
 out:
 	pthread_mutex_unlock(&db->lock);
@@ -145,6 +148,7 @@ void boydemdb_delete(boydemdb db, boydemdb_id id)
 
 	sqlite3_step(db->delete);
 
+	sqlite3_clear_bindings(db->insert);
 	sqlite3_reset(db->insert);
 
 out:
