@@ -134,8 +134,8 @@ void boydemdb_delete(boydemdb db, boydemdb_id id)
 
 	sqlite3_step(db->delete);
 
-	sqlite3_clear_bindings(db->insert);
-	sqlite3_reset(db->insert);
+	sqlite3_clear_bindings(db->delete);
+	sqlite3_reset(db->delete);
 }
 
 boydemdb boydemdb_open(const char *path)
