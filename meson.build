@@ -38,8 +38,7 @@ boydemdb_includes = include_directories('.')
 libboydemdb = static_library('boydemdb',
                              'boydemdb.c', sqlite,
                              c_args: sqlite_cflags + ['-DBOYDEMDB_INTERNAL'],
-                             include_directories: boydemdb_includes,
-                             dependencies: dependency('threads'))
+                             include_directories: boydemdb_includes)
 
 boydemdb_dependency = declare_dependency(link_with: libboydemdb,
                                          include_directories: boydemdb_includes)

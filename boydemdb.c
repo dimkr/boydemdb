@@ -42,12 +42,10 @@ boydemdb_id boydemdb_set(boydemdb db,
 	sqlite3_int64 id = -1;
 
 	if (size > INT_MAX)
-		return -1;
-
-	pthread_mutex_lock(&db->lock);
+		return id;
 
 	if (sqlite3_bind_int64(db->insert, 1, type) != SQLITE_OK)
-		goto out;
+		return id;
 
 	if (sqlite3_bind_blob(db->insert,
 	                      2,
@@ -65,8 +63,6 @@ reset:
 	sqlite3_clear_bindings(db->insert);
 	sqlite3_reset(db->insert);
 
-out:
-	pthread_mutex_unlock(&db->lock);
 	return id;
 }
 
@@ -75,10 +71,8 @@ void *boydemdb_get(boydemdb db, boydemdb_id id, size_t *size)
 	const void *p;
 	unsigned char *copy = NULL;
 
-	pthread_mutex_lock(&db->lock);
-
 	if (sqlite3_bind_int64(db->select, 1, id) != SQLITE_OK)
-		goto out;
+		return copy;
 
 	if (sqlite3_step(db->select) != SQLITE_ROW)
 		goto reset;
@@ -97,8 +91,6 @@ reset:
 	sqlite3_clear_bindings(db->select);
 	sqlite3_reset(db->select);
 
-out:
-	pthread_mutex_unlock(&db->lock);
 	return copy;
 }
 
@@ -110,10 +102,8 @@ void *boydemdb_one(boydemdb db,
 	const void *p;
 	unsigned char *copy = NULL;
 
-	pthread_mutex_lock(&db->lock);
-
 	if (sqlite3_bind_int(db->one, 1, type) != SQLITE_OK)
-		goto out;
+		return copy;
 
 	if (sqlite3_step(db->one) != SQLITE_ROW)
 		goto reset;
@@ -134,25 +124,18 @@ reset:
 	sqlite3_clear_bindings(db->one);
 	sqlite3_reset(db->one);
 
-out:
-	pthread_mutex_unlock(&db->lock);
 	return copy;
 }
 
 void boydemdb_delete(boydemdb db, boydemdb_id id)
 {
-	pthread_mutex_lock(&db->lock);
-
 	if (sqlite3_bind_int64(db->delete, 1, id) != SQLITE_OK)
-		goto out;
+		return;
 
 	sqlite3_step(db->delete);
 
 	sqlite3_clear_bindings(db->insert);
 	sqlite3_reset(db->insert);
-
-out:
-	pthread_mutex_unlock(&db->lock);
 }
 
 boydemdb boydemdb_open(const char *path)
@@ -163,16 +146,10 @@ boydemdb boydemdb_open(const char *path)
 	if (!db)
 		return NULL;
 
-	if (pthread_mutex_init(&db->lock, NULL) != 0) {
-		free(db);
-		return NULL;
-	}
-
 	if (sqlite3_open_v2(path,
 	                    &db->db,
 	                    SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 	                    NULL) != SQLITE_OK) {
-		pthread_mutex_destroy(&db->lock);
 		free(db);
 		return NULL;
 	}
@@ -183,7 +160,6 @@ boydemdb boydemdb_open(const char *path)
 	                 NULL,
 	                 NULL) != SQLITE_OK) {
 		sqlite3_close(db->db);
-		pthread_mutex_destroy(&db->lock);
 		free(db);
 		return NULL;
 	}
@@ -194,7 +170,6 @@ boydemdb boydemdb_open(const char *path)
 	                    &db->insert,
 	                    NULL) != SQLITE_OK) {
 		sqlite3_close(db->db);
-		pthread_mutex_destroy(&db->lock);
 		free(db);
 		return NULL;
 	}
@@ -206,7 +181,6 @@ boydemdb boydemdb_open(const char *path)
 	                    NULL) != SQLITE_OK) {
 		sqlite3_finalize(db->insert);
 		sqlite3_close(db->db);
-		pthread_mutex_destroy(&db->lock);
 		free(db);
 		return NULL;
 	}
@@ -219,7 +193,6 @@ boydemdb boydemdb_open(const char *path)
 		sqlite3_finalize(db->select);
 		sqlite3_finalize(db->insert);
 		sqlite3_close(db->db);
-		pthread_mutex_destroy(&db->lock);
 		free(db);
 		return NULL;
 	}
@@ -233,7 +206,6 @@ boydemdb boydemdb_open(const char *path)
 		sqlite3_finalize(db->select);
 		sqlite3_finalize(db->insert);
 		sqlite3_close(db->db);
-		pthread_mutex_destroy(&db->lock);
 		free(db);
 		return NULL;
 	}
@@ -249,8 +221,6 @@ void boydemdb_close(boydemdb db)
 	sqlite3_finalize(db->insert);
 
 	sqlite3_close(db->db);
-
-	pthread_mutex_destroy(&db->lock);
 
 	free(db);
 }

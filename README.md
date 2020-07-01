@@ -9,7 +9,7 @@
 
 ## Overview
 
-This is a wrapper around [SQLite](https://www.sqlite.org/) that is easy to integrate as a [Meson](http://mesonbuild.com/) subproject.
+This is a wrapper around [SQLite](https://www.sqlite.org/) that is easy to integrate as a [Meson](http://mesonbuild.com/) subproject. It's thread-unsafe and doesn't do dynamic loading.
 
 It stuffs blobs of binary data, identified by a unique integer, in a single DB table: messy, like a boydem.
 

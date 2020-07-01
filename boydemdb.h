@@ -26,7 +26,6 @@
 #	define _BOYDEMDB_H_INCLDED
 
 #	include <sys/types.h>
-#	include <pthread.h>
 
 #	ifdef BOYDEMDB_INTERNAL
 #		include <sqlite3.h>
@@ -37,7 +36,6 @@ typedef int64_t boydemdb_id;
 #	endif
 
 typedef struct {
-	pthread_mutex_t lock;
 #	ifdef BOYDEMDB_INTERNAL
 	sqlite3 *db;
 	sqlite3_stmt *select, *insert, *delete, *one;
