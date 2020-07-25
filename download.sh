@@ -24,7 +24,13 @@
 
 tmp=`mktemp`
 trap "rm -f $tmp" EXIT INT TERM
-curl -o $tmp https://www.sqlite.org/`curl https://www.sqlite.org/download.html | grep /sqlite-amalgamation-[0-9]*.zip | cut -f 4 -d \'`
+if [ -n "$2" ]
+then
+    url=$2
+else
+    url=https://www.sqlite.org/`curl https://www.sqlite.org/download.html | grep /sqlite-amalgamation-[0-9]*.zip | cut -f 4 -d \'`
+fi
+curl -o $tmp $url
 trap "rm -rf sqlite-amalgamation-[0-9]*" EXIT INT TERM
 unzip -qu $tmp
 mv sqlite-amalgamation-[0-9]*/sqlite3.[ch] $1

@@ -23,7 +23,7 @@
 project('boydemdb', 'c')
 
 sqlite = custom_target('sqlite',
-                       command: [join_paths(meson.current_source_dir(), 'download.sh'), meson.current_build_dir()],
+                       command: [join_paths(meson.current_source_dir(), 'download.sh'), meson.current_build_dir(), get_option('url')],
                        output: ['sqlite3.c', 'sqlite3.h'])
 
 sqlite_cflags = [
