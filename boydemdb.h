@@ -49,7 +49,7 @@ typedef struct {
 
 typedef boydemdb_id boydemdb_type;
 
-boydemdb_id boydemdb_set(boydemdb db,
+boydemdb_id boydemdb_add(boydemdb db,
                          const boydemdb_type type,
                          void *blob,
                          size_t size);

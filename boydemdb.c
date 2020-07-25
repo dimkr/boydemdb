@@ -34,7 +34,7 @@
 #define DELETE_QUERY "DELETE FROM blobs WHERE id = ?"
 #define CREATE_TABLE_QUERY "CREATE TABLE IF NOT EXISTS blobs (id INTEGER PRIMARY KEY, type INTEGER, data BLOB)"
 
-boydemdb_id boydemdb_set(boydemdb db,
+boydemdb_id boydemdb_add(boydemdb db,
                          const boydemdb_type type,
                          void *blob,
                          size_t size)
