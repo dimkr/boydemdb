@@ -138,6 +138,11 @@ void boydemdb_delete(boydemdb db, boydemdb_id id)
 	sqlite3_reset(db->delete);
 }
 
+static int try_again(void *arg, int times)
+{
+	return 1;
+}
+
 boydemdb boydemdb_open(const char *path)
 {
 	boydemdb db;
@@ -152,6 +157,11 @@ boydemdb boydemdb_open(const char *path)
 	                    NULL) != SQLITE_OK) {
 		free(db);
 		return NULL;
+	}
+
+	if (sqlite3_busy_handler(db->db, try_again, NULL) != SQLITE_OK) {
+		sqlite3_close(db->db);
+		free(db);
 	}
 
 	if (sqlite3_exec(db->db,
