@@ -26,6 +26,6 @@ tmp=`mktemp -d`
 trap "rm -rf $tmp" EXIT INT TERM
 
 cd $tmp
-$1/sqlite/configure
-make sqlite3.c
+$1/sqlite/configure > /dev/null
+make sqlite3.c > /dev/null
 mv -f sqlite3.c sqlite3.h $2/
