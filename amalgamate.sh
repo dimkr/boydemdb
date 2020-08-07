@@ -22,15 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-tmp=`mktemp`
-trap "rm -f $tmp" EXIT INT TERM
-if [ -n "$2" ]
-then
-    url=$2
-else
-    url=https://www.sqlite.org/`curl https://www.sqlite.org/download.html | grep /sqlite-amalgamation-[0-9]*.zip | cut -f 4 -d \'`
-fi
-curl -o $tmp $url
-trap "rm -rf sqlite-amalgamation-[0-9]*" EXIT INT TERM
-unzip -qu $tmp
-mv sqlite-amalgamation-[0-9]*/sqlite3.[ch] $1
+tmp=`mktemp -d`
+trap "rm -rf $tmp" EXIT INT TERM
+
+cd $tmp
+$1/sqlite/configure
+make sqlite3.c
+mv -vf sqlite3.c sqlite3.h $2/
