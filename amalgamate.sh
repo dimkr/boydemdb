@@ -28,4 +28,4 @@ trap "rm -rf $tmp" EXIT INT TERM
 cd $tmp
 $1/sqlite/configure
 make sqlite3.c
-mv -vf sqlite3.c sqlite3.h $2/
+mv -f sqlite3.c sqlite3.h $2/
