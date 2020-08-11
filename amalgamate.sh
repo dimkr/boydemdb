@@ -22,10 +22,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-tmp=`mktemp -d`
-trap "rm -rf $tmp" EXIT INT TERM
+if [ ! -f $1/sqlite3.c ] || [ ! -f $1/sqlite3.h ]
+then
+    tmp=`mktemp -d`
+    trap "rm -rf $tmp" EXIT INT TERM
 
-cd $tmp
-$1/sqlite/configure --disable-threadsafe --disable-tcl --disable-readline --disable-load-extension > /dev/null
-make sqlite3.c > /dev/null
-mv -f sqlite3.c sqlite3.h $2/
+    cd $tmp
+    $1/sqlite/configure --disable-threadsafe --disable-tcl --disable-readline --disable-load-extension > /dev/null
+    make sqlite3.c > /dev/null
+    mv -f sqlite3.c sqlite3.h $1/
+fi
+
+cp -f $1/sqlite3.c $1/sqlite3.h $2/
