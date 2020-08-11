@@ -26,6 +26,6 @@ tmp=`mktemp -d`
 trap "rm -rf $tmp" EXIT INT TERM
 
 cd $tmp
-$1/sqlite/configure > /dev/null
+$1/sqlite/configure --disable-threadsafe --disable-tcl --disable-readline --disable-load-extension > /dev/null
 make sqlite3.c > /dev/null
 mv -f sqlite3.c sqlite3.h $2/
